@@ -1,7 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { format } from "date-fns";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
@@ -47,7 +49,12 @@ export default async function DashboardPage({
 
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
+        <Button render={<Link href="/dashboard/workout/new" />} nativeButton={false}>
+          New workout
+        </Button>
+      </div>
 
       <div className="grid items-start gap-8 md:grid-cols-[auto_1fr]">
         <Card className="w-fit">

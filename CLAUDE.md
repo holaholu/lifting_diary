@@ -21,6 +21,14 @@ Read `docs/ui.md` before writing any UI code. In short: only shadcn/ui component
 
 Read `docs/data-fetching.md` before writing any data access code. In short: fetch data **only in server components** (never route handlers, client components, or server actions), run all database queries through helper functions in `/data` using the Drizzle query builder (**no raw SQL**), and always scope queries to the `userId` from Clerk's `auth()` so users can only access their own data.
 
+## Auth standards
+
+Read `docs/auth.md` before writing any auth-related code. In short: Clerk is the only auth provider; identify the user only via `auth()` on the server, never from client input.
+
+## Data mutation standards
+
+Read `docs/data-mutations.md` before writing any code that creates, updates, or deletes data. In short: mutations go through helper functions in `/data` (Drizzle, no raw SQL), are triggered only by server actions in colocated `actions.ts` files, are typed with no `FormData`, and validate all arguments with zod.
+
 ## Architecture notes
 
 Started from `create-next-app`. Features so far: Clerk auth (`proxy.ts`, sign-in/sign-up routes, user webhook at `app/api/webhooks`), Drizzle + Neon (`db/`, schema in `db/schema.ts`), query helpers in `data/`, and `/dashboard` (`app/dashboard/`: a client page with a date picker that loads that day's workouts through the server action in `actions.ts`). Non-obvious config:

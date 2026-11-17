@@ -86,3 +86,20 @@ export async function getWorkoutsForDate(
   }
   return [...result.values()];
 }
+
+/** Creates a workout owned by `userId`. */
+export async function createWorkout(
+  userId: string,
+  input: { name: string; startedAt?: Date; notes?: string },
+) {
+  const [workout] = await db
+    .insert(workouts)
+    .values({
+      userId,
+      name: input.name,
+      notes: input.notes,
+      ...(input.startedAt && { startedAt: input.startedAt }),
+    })
+    .returning();
+  return workout;
+}
