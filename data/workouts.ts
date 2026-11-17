@@ -103,3 +103,26 @@ export async function createWorkout(
     .returning();
   return workout;
 }
+
+/** A single workout owned by `userId` (no exercises), or null if not found. */
+export async function getWorkoutById(userId: string, workoutId: number) {
+  const [workout] = await db
+    .select()
+    .from(workouts)
+    .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)));
+  return workout ?? null;
+}
+
+/** Updates a workout owned by `userId`. Returns null if it doesn't exist/isn't theirs. */
+export async function updateWorkout(
+  userId: string,
+  workoutId: number,
+  input: { name: string; startedAt: Date; notes: string | null },
+) {
+  const [workout] = await db
+    .update(workouts)
+    .set({ name: input.name, startedAt: input.startedAt, notes: input.notes })
+    .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)))
+    .returning();
+  return workout ?? null;
+}

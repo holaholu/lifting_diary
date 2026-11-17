@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -87,6 +88,16 @@ export default async function DashboardPage({
                     {w.completedAt && ` – ${format(w.completedAt, "h:mm a")}`}
                     {w.notes && ` · ${w.notes}`}
                   </CardDescription>
+                  <CardAction>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      render={<Link href={`/dashboard/workout/${w.id}`} />}
+                      nativeButton={false}
+                    >
+                      Edit
+                    </Button>
+                  </CardAction>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {w.exercises.map((ex) => (
