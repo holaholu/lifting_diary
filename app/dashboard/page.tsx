@@ -51,14 +51,16 @@ export default async function DashboardPage({
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
+        <h1 className="bg-gradient-to-r from-fuchsia-500 to-violet-500 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent">
+          Dashboard
+        </h1>
         <Button render={<Link href="/dashboard/workout/new" />} nativeButton={false}>
           New workout
         </Button>
       </div>
 
       <div className="grid items-start gap-8 md:grid-cols-[auto_1fr]">
-        <Card className="w-fit">
+        <Card className="w-fit border-t-4 border-t-cyan-500">
           <CardContent>
             <Calendar
               mode="single"
@@ -70,7 +72,7 @@ export default async function DashboardPage({
         </Card>
 
         <section className="space-y-4">
-          <h2 className="text-lg font-medium">{heading}</h2>
+          <h2 className="text-xl font-bold text-primary">{heading}</h2>
 
           {workouts === null ? (
             <p className="text-muted-foreground">Sign in to see your workouts.</p>
@@ -80,7 +82,7 @@ export default async function DashboardPage({
             </p>
           ) : (
             workouts.map((w) => (
-              <Card key={w.id}>
+              <Card key={w.id} className="border-l-4 border-l-fuchsia-500 bg-gradient-to-br from-card to-fuchsia-50 dark:to-card">
                 <CardHeader>
                   <CardTitle>{w.name ?? "Workout"}</CardTitle>
                   <CardDescription>
@@ -102,7 +104,7 @@ export default async function DashboardPage({
                 <CardContent className="space-y-3">
                   {w.exercises.map((ex) => (
                     <div key={ex.id}>
-                      <h3 className="text-sm font-medium">{ex.name}</h3>
+                      <h3 className="text-sm font-semibold text-violet-600 dark:text-violet-300">{ex.name}</h3>
                       {ex.sets.map((s) => (
                         <p key={s.id} className="text-sm text-muted-foreground">
                           Set {s.setNumber}: {s.reps} reps
