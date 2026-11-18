@@ -60,9 +60,9 @@ export default function EditWorkoutForm({
 
   return (
     <main className="mx-auto w-full max-w-xl flex-1 p-6">
-      <Card>
+      <Card className="border-t-4 border-t-violet-500">
         <CardHeader>
-          <CardTitle>Edit workout</CardTitle>
+          <CardTitle className="text-primary">Edit workout</CardTitle>
           <CardDescription>Update the details of this workout.</CardDescription>
         </CardHeader>
         <CardContent>

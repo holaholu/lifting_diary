@@ -59,9 +59,9 @@ export default function NewWorkoutPage() {
 
   return (
     <main className="mx-auto w-full max-w-xl flex-1 p-6">
-      <Card>
+      <Card className="border-t-4 border-t-violet-500">
         <CardHeader>
-          <CardTitle>New workout</CardTitle>
+          <CardTitle className="text-primary">New workout</CardTitle>
           <CardDescription>
             Leave the date and time blank to start the workout now.
           </CardDescription>
