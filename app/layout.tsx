@@ -9,7 +9,9 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { ThemeProvider } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,8 +34,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
         <ClerkProvider>
           <header className="flex h-16 items-center justify-between gap-4 border-b border-primary/20 bg-card/70 px-6 backdrop-blur">
             <Link
@@ -56,10 +65,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   <UserButton />
                 </Show>
               </Suspense>
+              <ThemeToggle />
             </div>
           </header>
           {children}
         </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
