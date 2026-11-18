@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: which-month-busiest
+expected_outcome: |
+  The reply names the month with the most workouts using real counts from the database, and a PNG bar chart of workouts per month is saved and its path reported.

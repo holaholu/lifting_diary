@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: default-yearly-chart
+expected_outcome: |
+  A PNG bar chart is produced covering the last 12 months with month on the x axis and workout count on the y axis, and the reply states where the image is saved and the monthly counts.

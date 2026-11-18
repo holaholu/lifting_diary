@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -16,13 +16,20 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
 import { updateWorkoutAction } from "./actions";
+
+type SetState = { reps: string; weightKg: string };
+type ExerciseState = { name: string; sets: SetState[] };
 
 export default function EditWorkoutForm({
   workout,
 }: {
-  workout: { id: number; name: string; startedAt: string; notes: string };
+  workout: {
+    id: number;
+    name: string;
+    startedAt: string;
+    exercises: ExerciseState[];
+  };
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -30,8 +37,22 @@ export default function EditWorkoutForm({
   const [name, setName] = useState(workout.name);
   const [date, setDate] = useState<Date>(initial);
   const [time, setTime] = useState(format(initial, "HH:mm"));
-  const [notes, setNotes] = useState(workout.notes);
+  const [exercises, setExercises] = useState<ExerciseState[]>(workout.exercises);
   const [error, setError] = useState<string | null>(null);
+
+  function updateExercise(i: number, patch: Partial<ExerciseState>) {
+    setExercises((prev) => prev.map((ex, k) => (k === i ? { ...ex, ...patch } : ex)));
+  }
+
+  function updateSet(i: number, j: number, patch: Partial<SetState>) {
+    setExercises((prev) =>
+      prev.map((ex, k) =>
+        k === i
+          ? { ...ex, sets: ex.sets.map((st, l) => (l === j ? { ...st, ...patch } : st)) }
+          : ex,
+      ),
+    );
+  }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,7 +68,13 @@ export default function EditWorkoutForm({
         workoutId: workout.id,
         name,
         startedAt,
-        notes,
+        exercises: exercises.map((ex) => ({
+          name: ex.name,
+          sets: ex.sets.map((st) => ({
+            reps: Number(st.reps),
+            weightKg: st.weightKg.trim() === "" ? null : Number(st.weightKg),
+          })),
+        })),
       });
       if (!result.success) {
         setError(result.error);
@@ -115,13 +142,112 @@ export default function EditWorkoutForm({
               </div>
 
               <Field>
-                <FieldLabel htmlFor="notes">Notes</FieldLabel>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  maxLength={2000}
-                />
+                <FieldLabel>Exercises</FieldLabel>
+                <div className="space-y-4">
+                  {exercises.map((ex, i) => (
+                    <div
+                      key={i}
+                      className="space-y-2 rounded-lg border border-primary/20 bg-muted/50 p-3"
+                    >
+                      <div className="flex gap-2">
+                        <Input
+                          aria-label={`Exercise ${i + 1} name`}
+                          value={ex.name}
+                          onChange={(e) => updateExercise(i, { name: e.target.value })}
+                          placeholder="Exercise (e.g. Squats)"
+                          maxLength={255}
+                          required
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Remove exercise ${i + 1}`}
+                          onClick={() =>
+                            setExercises((prev) => prev.filter((_, k) => k !== i))
+                          }
+                        >
+                          <Trash2 />
+                        </Button>
+                      </div>
+
+                      {ex.sets.map((st, j) => (
+                        <div key={j} className="flex items-center gap-2 pl-4">
+                          <span className="w-12 shrink-0 text-sm text-muted-foreground">
+                            Set {j + 1}
+                          </span>
+                          <Input
+                            aria-label={`Exercise ${i + 1} set ${j + 1} reps`}
+                            type="number"
+                            inputMode="numeric"
+                            min={1}
+                            step={1}
+                            placeholder="Reps"
+                            value={st.reps}
+                            onChange={(e) => updateSet(i, j, { reps: e.target.value })}
+                            required
+                          />
+                          <Input
+                            aria-label={`Exercise ${i + 1} set ${j + 1} weight in kg`}
+                            type="number"
+                            inputMode="decimal"
+                            min={0}
+                            step="any"
+                            placeholder="kg"
+                            value={st.weightKg}
+                            onChange={(e) =>
+                              updateSet(i, j, { weightKg: e.target.value })
+                            }
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Remove set ${j + 1} of exercise ${i + 1}`}
+                            onClick={() =>
+                              updateExercise(i, {
+                                sets: ex.sets.filter((_, l) => l !== j),
+                              })
+                            }
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      ))}
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="ml-4"
+                        onClick={() =>
+                          updateExercise(i, {
+                            // New sets start from the previous set's values.
+                            sets: [
+                              ...ex.sets,
+                              ex.sets.at(-1) ?? { reps: "", weightKg: "" },
+                            ],
+                          })
+                        }
+                      >
+                        <Plus /> Add set
+                      </Button>
+                    </div>
+                  ))}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() =>
+                      setExercises((prev) => [
+                        ...prev,
+                        { name: "", sets: [{ reps: "", weightKg: "" }] },
+                      ])
+                    }
+                  >
+                    <Plus /> Add exercise
+                  </Button>
+                </div>
               </Field>
 
               {error && <FieldError>{error}</FieldError>}

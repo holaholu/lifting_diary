@@ -24,7 +24,13 @@ export default async function EditWorkoutPage({
         id: workout.id,
         name: workout.name ?? "",
         startedAt: workout.startedAt.toISOString(),
-        notes: workout.notes ?? "",
+        exercises: workout.exercises.map((e) => ({
+          name: e.name,
+          sets: e.sets.map((st) => ({
+            reps: String(st.reps),
+            weightKg: st.weightKg == null ? "" : String(Number(st.weightKg)),
+          })),
+        })),
       }}
     />
   );

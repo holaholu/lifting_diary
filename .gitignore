@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local seed data (contains personal details)
 db/seed.example.sql
+
+# workouts-chart skill virtualenv
+.claude/skills/workouts-chart/.venv/

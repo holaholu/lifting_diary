@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: custom-output-path
+expected_outcome: |
+  The chart is saved at progress/monthly-workouts.png inside the project folder, as a valid PNG, and the reply gives that path.
